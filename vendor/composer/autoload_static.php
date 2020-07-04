@@ -20,11 +20,25 @@ class ComposerStaticInit3052c930c4fe92b5d27afb16e8b1ce1c
         ),
     );
 
+    public static $classMap = array (
+        'MyLib\\Classes\\DataTypeFormatter' => __DIR__ . '/../..' . '/src/classes/DataTypeFormatter.php',
+        'MyLib\\Classes\\DefaultConfig' => __DIR__ . '/../..' . '/src/classes/DefaultConfig.php',
+        'MyLib\\Classes\\HtmlDataGrid' => __DIR__ . '/../..' . '/src/classes/HtmlDataGrid.php',
+        'MyLib\\Classes\\HttpState' => __DIR__ . '/../..' . '/src/classes/HttpState.php',
+        'MyLib\\Classes\\TableColumn' => __DIR__ . '/../..' . '/src/classes/TableColumn.php',
+        'MyLib\\Interfaces\\Column' => __DIR__ . '/../..' . '/src/Interfaces/InterfaceColumn.php',
+        'MyLib\\Interfaces\\Config' => __DIR__ . '/../..' . '/src/Interfaces/interfaceConfig.php',
+        'MyLib\\Interfaces\\DataGrid' => __DIR__ . '/../..' . '/src/Interfaces/InterfaceDataGrid.php',
+        'MyLib\\Interfaces\\DataType' => __DIR__ . '/../..' . '/src/Interfaces/InterfaceDataType.php',
+        'MyLib\\Interfaces\\State' => __DIR__ . '/../..' . '/src/Interfaces/InterfaceState.php',
+    );
+
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
             $loader->prefixLengthsPsr4 = ComposerStaticInit3052c930c4fe92b5d27afb16e8b1ce1c::$prefixLengthsPsr4;
             $loader->prefixDirsPsr4 = ComposerStaticInit3052c930c4fe92b5d27afb16e8b1ce1c::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit3052c930c4fe92b5d27afb16e8b1ce1c::$classMap;
 
         }, null, ClassLoader::class);
     }
