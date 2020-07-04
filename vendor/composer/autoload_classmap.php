@@ -6,4 +6,14 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'MyLib\\Classes\\DataTypeFormatter' => $baseDir . '/src/classes/DataTypeFormatter.php',
+    'MyLib\\Classes\\DefaultConfig' => $baseDir . '/src/classes/DefaultConfig.php',
+    'MyLib\\Classes\\HtmlDataGrid' => $baseDir . '/src/classes/HtmlDataGrid.php',
+    'MyLib\\Classes\\HttpState' => $baseDir . '/src/classes/HttpState.php',
+    'MyLib\\Classes\\TableColumn' => $baseDir . '/src/classes/TableColumn.php',
+    'MyLib\\Interfaces\\Column' => $baseDir . '/src/Interfaces/InterfaceColumn.php',
+    'MyLib\\Interfaces\\Config' => $baseDir . '/src/Interfaces/interfaceConfig.php',
+    'MyLib\\Interfaces\\DataGrid' => $baseDir . '/src/Interfaces/InterfaceDataGrid.php',
+    'MyLib\\Interfaces\\DataType' => $baseDir . '/src/Interfaces/InterfaceDataType.php',
+    'MyLib\\Interfaces\\State' => $baseDir . '/src/Interfaces/InterfaceState.php',
 );
