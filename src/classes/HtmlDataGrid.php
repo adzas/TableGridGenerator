@@ -5,9 +5,12 @@ use MyLib\Interfaces\DataGrid;
 
 class HtmlDataGrid implements DataGrid
 {
+    protected $config;
+
     public function withConfig(DefaultConfig $config): HtmlDataGrid
     {
         //tutaj w parametrze przychodzi konfiguracja tabeli
+        $this->config = $config->getColumns();
         return $this;
     }
 
@@ -17,25 +20,22 @@ class HtmlDataGrid implements DataGrid
         <div class="example">
             <table class="table table-bordered">
                 <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Name</th>
-                    <th>Age</th>
-                    <th>Company</th>
-                    <th>Balance</th>
-                    <th>Phone</th>
-                    <th>Email</th>
-                </tr>
+                <tr>';
+                foreach ($this->config as $head) {
+
+                    $html.= "<th>" . $head->getLabel() . "</th>";
+                }
+        $html.= '</tr>
                 </thead>
                 <tbody>';
                 foreach ($rows as $val) {
                     $html.='
                     <tr>
                         <td style="text-align: right;">' . $val['id'] . '</td>
-                        <td>' . $val['name'] . '</td>
+                        <td>' . ($this->config[1]->getDataType())->format($val['name']) . '</td>
                         <td style="text-align: right;">' . $val['age'] . '</td>
-                        <td>' . $val['company'] . '</td>
-                        <td style="text-align: right;">' . $val['balance'] . ' USD</td>
+                        <td>' . ($this->config[3]->getDataType())->format($val['company']) . '</td>
+                        <td style="text-align: right;">' . ($this->config[4]->getDataType())->format($val['balance']) . ' USD</td>
                         <td>' . $val['phone'] . '</td>
                         <td>' . $val['email'] . '</td>
                     </tr>';

@@ -8,11 +8,6 @@ class TableColumn implements Column
     protected $type;
     protected $name;
 
-    public function __construct(String $name, String $type = "text") {
-        $this->name = $name;
-        $this->type = $type;
-    }
-
     public function withLabel(string $label): TableColumn
     {
         $this->name = $label;
