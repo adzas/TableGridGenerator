@@ -6,8 +6,10 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname($vendorDir);
 
 return array(
+    'MyLib\\Classes\\Alert' => $baseDir . '/src/classes/Alert.php',
     'MyLib\\Classes\\DataTypeFormatter' => $baseDir . '/src/classes/DataTypeFormatter.php',
     'MyLib\\Classes\\DefaultConfig' => $baseDir . '/src/classes/DefaultConfig.php',
+    'MyLib\\Classes\\Formatter\\NumberType' => $baseDir . '/src/classes/formatter/NumberType.php',
     'MyLib\\Classes\\HtmlDataGrid' => $baseDir . '/src/classes/HtmlDataGrid.php',
     'MyLib\\Classes\\HttpState' => $baseDir . '/src/classes/HttpState.php',
     'MyLib\\Classes\\TableColumn' => $baseDir . '/src/classes/TableColumn.php',

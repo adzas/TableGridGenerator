@@ -2,48 +2,52 @@
 
 namespace MyLib\Classes;
 use MyLib\Interfaces\DataGrid;
+use MyLib\Interfaces\State;
 
 class HtmlDataGrid implements DataGrid
 {
-    protected $config;
+    protected $columns;
+    protected $httmState;
+    protected $limitRowsForPage;
 
     public function withConfig(DefaultConfig $config): HtmlDataGrid
     {
         //tutaj w parametrze przychodzi konfiguracja tabeli
-        $this->config = $config->getColumns();
+        $this->columns = $config->getColumns();
+        $this->limitRowsForPage = $config->getConfig();
         return $this;
+    }
+
+    public function setState(httpState $state)
+    {
+        $this->httpState = $state;
     }
 
     public function render(array $rows, HttpState $state): void
     {
-        $html = '
-        <div class="example">
-            <table class="table table-bordered">
-                <thead>
-                <tr>';
-                foreach ($this->config as $head) {
+        $this->setState($state);
+        $this->getHead();
+        $this->getContent($rows);
+        $this->getNavigation();
+    }
 
-                    $html.= "<th>" . $head->getLabel() . "</th>";
-                }
-        $html.= '</tr>
-                </thead>
-                <tbody>';
-                foreach ($rows as $val) {
-                    $html.='
-                    <tr>
-                        <td style="text-align: right;">' . $val['id'] . '</td>
-                        <td>' . ($this->config[1]->getDataType())->format($val['name']) . '</td>
-                        <td style="text-align: right;">' . $val['age'] . '</td>
-                        <td>' . ($this->config[3]->getDataType())->format($val['company']) . '</td>
-                        <td style="text-align: right;">' . ($this->config[4]->getDataType())->format($val['balance']) . ' USD</td>
-                        <td>' . $val['phone'] . '</td>
-                        <td>' . $val['email'] . '</td>
-                    </tr>';
-                }
-                
-                $html.= '</tbody>
-            </table>
+    public function getHead(): void
+    {
+        $this->getStartTable();
+        ?>
+            <thead>
+                <tr>
+                    <?php foreach ($this->columns as $head): ?>
+                        <th><?=$head->getLabel();?></th>
+                    <?php endforeach; ?>
+                </tr>
+            </thead>
+        <?php
+    }
 
+    public function getNavigation(): void
+    {
+        ?>
             <nav aria-label="Page navigation example">
                 <ul class="pagination justify-content-center">
                     <li class="page-item disabled">
@@ -58,8 +62,58 @@ class HtmlDataGrid implements DataGrid
                     </li>
                 </ul>
             </nav>
-        </div>
-        ';
-        echo $html;
+        <?php
+        $this->getEndTable();
+    }
+
+    public function getContent(array $rows)
+    {
+        /* echo "<pre>";
+        print_r($rows);
+        echo "</pre>"; */
+        if($this->limitRowsForPage < count($rows)) {
+            $rowsCount = $this->limitRowsForPage;
+        } else {
+            $rowsCount = count($rows);
+        }
+        ?>
+            <tbody>
+                <?php for ($i = 0; $i < $rowsCount; $i++): ?>
+                <tr>
+                    <?=$this->generateRow($rows[$i]);?>
+                </tr>
+                <?php endfor; ?>
+            </tbody>
+        <?php
+    }
+
+    public function generateRow(array $row)
+    {
+        $j = 0;
+        foreach ($row as $col) {
+            if($j <= count($this->columns)) {
+                echo '<td>';
+                $colGrid = $this->getColumns($j);
+                $dataType = $colGrid->getDataType();
+                echo $dataType->format($col);
+                echo '</td>';
+            }
+            $j++;
+        }
+    }
+
+    public function getColumns(int $i)
+    {
+        return $this->columns[$i];
+    }
+
+    public function getStartTable(): void
+    {
+        echo '<table class="table table-bordered">';
+    }
+
+    public function getEndTable(): void
+    {
+        echo '</table>';
     }
 }

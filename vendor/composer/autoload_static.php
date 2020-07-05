@@ -21,8 +21,10 @@ class ComposerStaticInit3052c930c4fe92b5d27afb16e8b1ce1c
     );
 
     public static $classMap = array (
+        'MyLib\\Classes\\Alert' => __DIR__ . '/../..' . '/src/classes/Alert.php',
         'MyLib\\Classes\\DataTypeFormatter' => __DIR__ . '/../..' . '/src/classes/DataTypeFormatter.php',
         'MyLib\\Classes\\DefaultConfig' => __DIR__ . '/../..' . '/src/classes/DefaultConfig.php',
+        'MyLib\\Classes\\Formatter\\NumberType' => __DIR__ . '/../..' . '/src/classes/formatter/NumberType.php',
         'MyLib\\Classes\\HtmlDataGrid' => __DIR__ . '/../..' . '/src/classes/HtmlDataGrid.php',
         'MyLib\\Classes\\HttpState' => __DIR__ . '/../..' . '/src/classes/HttpState.php',
         'MyLib\\Classes\\TableColumn' => __DIR__ . '/../..' . '/src/classes/TableColumn.php',

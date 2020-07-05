@@ -1,5 +1,15 @@
 [
     {
+        "id": 0,
+        "balance": 3055.76,
+        "name": "Celina Collins",
+        "age": 23,
+        "gender": "female",
+        "company": "NETBOOK",
+        "email": "celinacollins@netbook.com",
+        "phone": "+1 (855) 514-2949"
+    },
+    {
         "id": 1,
         "balance": 3055.76,
         "name": "Celina Collins",
