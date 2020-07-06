@@ -41,7 +41,7 @@ class NumberType implements DataType
                 return str_replace('.', $this->decimal, $number);
             }
         } else {
-            Alert::warning();
+            Alert::warning('Number format incorrect');
             return '';
         }
     }

@@ -30,8 +30,6 @@ class RawType implements DataType
 
     public function format(string $value): string
     {
-        $number = number_format($value, 10, '.', ',');
-        $number = round($number, $this->constDecimalPlacesAway);
-        return number_format($value, $this->precision, $this->dec, ' ');
+        return $value;
     }
 }

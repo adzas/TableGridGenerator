@@ -36,10 +36,9 @@ class MoneyType implements DataType
             } else {
                 $number = $value;
             }
-            
             return number_format($number, $this->precision, ',', $this->separator) . ' ' . $this->currency;
         } else {
-            Alert::warning();
+            Alert::warning('Money format incorrect');
             return '';
         }
     }

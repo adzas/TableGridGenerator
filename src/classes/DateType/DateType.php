@@ -27,7 +27,7 @@ class DateType implements DataType
         if ($this->isValidTimeStamp($date)) {
             return date($this->dateFormat, intval($date));
         } else {
-            Alert::warning();
+            Alert::warning('Date format incorrect');
             return '';
         }
     }

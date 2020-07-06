@@ -7,6 +7,7 @@ class TableColumn implements Column
 {
     protected $type;
     protected $name;
+    protected $align;
 
     public function withLabel(string $label): TableColumn
     {
@@ -32,12 +33,13 @@ class TableColumn implements Column
 
     public function withAlign(string $align): TableColumn
     {
+        $this->align = $align;
         return $this;
     }
 
     public function getAlign(): string
     {
-        return '';
+        return $this->align;
     }
 
 }
