@@ -6,13 +6,13 @@ use MyLib\Interfaces\State;
 class HttpState implements State
 {
     private const ROWS_PER_PAGE = 9;
-    private const ORDER_BY = 'id';
+    private const ORDER_BY = '';
 
     private static $instance;
     private $currentPage = 0;
-    private $orderAsc = true;
+    private $orderAsc;
     private $orderBy = self::ORDER_BY;
-    private $orderDesc = false;
+    private $orderDesc;
     private $rowsPerPage = self::ROWS_PER_PAGE;
 
     private function __construct(
@@ -33,10 +33,14 @@ class HttpState implements State
         
         if(isset($_GET))
         {
-            if (isset($_GET['sort']) && !empty($_GET['sort'])) {
-                self::$instance->orderBy = htmlentities($_GET['sort']);
+            if (isset($_GET['sortAsc']) && !empty($_GET['sortAsc'])) {
+                self::$instance->orderBy = htmlentities($_GET['sortAsc']);
+                self::$instance->orderAsc = true;
+            } elseif (isset($_GET['sortDesc']) && !empty($_GET['sortDesc'])) {
+                self::$instance->orderBy = htmlentities($_GET['sortDesc']);
+                self::$instance->orderDesc = true;
             }
-            
+
             if (isset($_GET['page']) && is_numeric($_GET['page'])) {
                 self::$instance->currentPage = $_GET['page'];
             }
@@ -57,7 +61,12 @@ class HttpState implements State
 
     public function isOrderDesc(): bool
     {
-        return $this->orderDesc;
+        return !!$this->orderDesc;
+    }
+
+    public function isOrderAsc(): bool
+    {
+        return !!$this->orderAsc;
     }
 
     public function getOrderAscIcon()
@@ -76,11 +85,6 @@ class HttpState implements State
             <path fill-rule="evenodd" d="M4.646 7.646a.5.5 0 0 1 .708 0L8 10.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"></path>
             <path fill-rule="evenodd" d="M8 4.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5z"></path>
         </svg>';
-    }
-
-    public function isOrderAsc(): bool
-    {
-        return $this->orderAsc;
     }
 
     public function getRowsPerPage(): int

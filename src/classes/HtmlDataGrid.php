@@ -40,15 +40,25 @@ class HtmlDataGrid implements DataGrid
                     <th>
                         <a href="<?=$this->generateSortChangeLink($rows_keys[$k]);?>">
                             <?=$head->getLabel();?>
-                            <?=$rows_keys[$k] == $this->httpState->getOrderBy() ? 
-                            $this->httpState->getOrderDescIcon() : 
-                            '';?>
+                            <?=$this->getIconSort($rows_keys[$k]);?>
+                            
                         </a>
                     </th>
                     <?php endforeach; ?>
                 </tr>
             </thead>
         <?php
+    }
+
+    public function getIconSort(string $key)
+    {
+        if ($key == $this->httpState->getOrderBy()) {
+            if ($this->httpState->isOrderDesc()) {
+                return $this->httpState->getOrderDescIcon();
+            } elseif ($this->httpState->isOrderAsc()) {
+                return $this->httpState->getOrderAscIcon();
+            }
+        }
     }
 
     public function getNavigation(int $howMuchRows): void
@@ -86,23 +96,59 @@ class HtmlDataGrid implements DataGrid
 
     public function generatePageChangeLink(int $page)
     {
-        return '?page=' . $page . '&sort=' . $this->httpState->getOrderBy();
+        if ($this->httpState->isOrderDesc()) {
+            return '?page=' . $page . '&sortDesc=' . $this->httpState->getOrderBy();
+        } elseif ($this->httpState->isOrderAsc()) {
+            return '?page=' . $page . '&sortAsc=' . $this->httpState->getOrderBy();
+        } else {
+            return '?page=' . $page . '&sortDesc=' . $this->httpState->getOrderBy();
+        }
     }
 
     public function generateSortChangeLink(string $sort)
     {
-        return '?page=' . $this->httpState->getCurrentPAge() . '&sort=' . $sort;
+        if (!$this->httpState->isOrderDesc() && !$this->httpState->isOrderAsc()) {
+            return '?page=' . $this->httpState->getCurrentPage() . '&sortDesc=' . $sort;
+        }
+        
+        if (empty($this->httpState->getOrderBy())) {
+            return '?page=' . $this->httpState->getCurrentPage() . '&sortDesc=' . $sort;
+        }
+        
+        if ($this->httpState->getOrderBy() == $sort) {
+            if ($this->httpState->isOrderDesc()) {
+                return '?page=' . $this->httpState->getCurrentPage() . '&sortAsc=' . $sort;
+            } elseif ($this->httpState->isOrderAsc()) {
+                return '?page=' . $this->httpState->getCurrentPage();
+            } else {
+                return '?page=' . $this->httpState->getCurrentPage() . '&sortDesc=' . $sort;
+            }
+        } else {
+            return '?page=' . $this->httpState->getCurrentPage() . '&sortDesc=' . $sort;
+        }
     }
 
-    private function buildSorter($key) {
+    private function buildSorterDesc($key) {
         return function ($a, $b) use ($key) {
             return $a[$key] <=> $b[$key];
         };
     }
 
+    private function buildSorterAsc($key) {
+        return function ($a, $b) use ($key) {
+            return $b[$key] <=> $a[$key];
+        };
+    }
+
     public function getContent(array $rows)
     {
-        usort($rows, $this->buildSorter($this->httpState->getOrderBy()));
+        if ($this->httpState->isOrderDesc()) {
+            usort($rows, $this->buildSorterDesc($this->httpState->getOrderBy()));
+        } elseif ($this->httpState->isOrderAsc()) {
+            usort($rows, $this->buildSorterAsc($this->httpState->getOrderBy()));
+        } else {
+            $rows;
+        }
 
         if($this->httpState->getRowsPerPage() < count($rows)) {
             $rowsCount = $this->httpState->getRowsPerPage();

@@ -5,9 +5,9 @@ use MyLib\Interfaces\{Column};
 
 class TableColumn implements Column
 {
-    protected $type;
-    protected $name;
     protected $align;
+    protected $name;
+    protected $type;
 
     public function withLabel(string $label): TableColumn
     {

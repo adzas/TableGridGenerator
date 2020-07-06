@@ -14,14 +14,14 @@ use MyLib\Classes\Formatter\TextType;
 
 class DataTypeFormatter implements DataType
 {
-    protected $type = "TextType";
-    protected $numberTypeSettings = [];
     protected $dataTypeSettings = [];
     protected $dataTimeTypeSettings = [];
-    protected $moneyTypeSettings = [];
     protected $imageTypeSettings = [];
     protected $linkTypeSettings = [];
+    protected $moneyTypeSettings = [];
+    protected $numberTypeSettings = [];
     protected $rawTypeSettings = [];
+    protected $type = "TextType";
 
     /**
      * ustawia typ danych

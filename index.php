@@ -9,22 +9,19 @@ use MyLib\Classes\DefaultConfig;
 
 require_once realpath('vendor/autoload.php');
 
-$rows = json_decode(file_get_contents("data2.json"), true);
+$rows = json_decode(file_get_contents("data.json"), true);
 
-$state = HttpState::create(2); // instanceof State, dane powinny zostać pobrane z $_GET
+$state = HttpState::create(); // instanceof State, dane powinny zostać pobrane z $_GET
 
 $config = (new DefaultConfig) // instanceof Config, z dodatkowymi metodami
     ->addIntColumn('id')
-    ->addTextColumn('text')
-    ->addDateTimeColumn('data');
-    /* ->addIntColumn('id')
-    ->addCurrencyColumn('balance', 'USD', ' ', 3)
+    ->addCurrencyColumn('balance', 'USD')
     ->addTextColumn('name')
     ->addIntColumn('age')
     ->addTextColumn('gender')
     ->addTextColumn('company')
     ->addTextColumn('email')
-    ->addTextColumn('phone'); */
+    ->addTextColumn('phone');
 
 $dataGrid = new HtmlDataGrid(); // instanceof DataGrid
 

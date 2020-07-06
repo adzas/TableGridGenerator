@@ -7,8 +7,8 @@ use MyLib\Interfaces\Config;
 
 class DefaultConfig implements Config
 {
-    protected $key = 0;
     protected $columns = [];
+    protected $key = 0;
     protected $limitRowsForPage = 9;
 
     /**
