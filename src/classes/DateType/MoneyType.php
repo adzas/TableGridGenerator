@@ -16,8 +16,8 @@ class MoneyType implements DataType
      * oraz wyświetlania miejsc dziesiętnych (można wyłączyć aby nie pokazywać groszy).
      */
     protected $currency;
-    protected $separator;
     protected $precision;
+    protected $separator;
     protected $withoutDecimalPlaces;
 
     public function __construct(array $sets = null) {
@@ -36,10 +36,9 @@ class MoneyType implements DataType
             } else {
                 $number = $value;
             }
-            
             return number_format($number, $this->precision, ',', $this->separator) . ' ' . $this->currency;
         } else {
-            Alert::warning();
+            Alert::warning('Money format incorrect');
             return '';
         }
     }

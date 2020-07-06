@@ -7,8 +7,8 @@ use MyLib\Interfaces\Config;
 
 class DefaultConfig implements Config
 {
-    protected $key = 0;
     protected $columns = [];
+    protected $key = 0;
     protected $limitRowsForPage = 9;
 
     /**
@@ -33,15 +33,18 @@ class DefaultConfig implements Config
         return $this->limitRowsForPage;
     }
 
-    public function addDateTimeColumn(string $name, string $dateTimeFormat): DefaultConfig
-    {
+    public function addDateTimeColumn(
+        string $name, 
+        string $dateTimeFormat = 'Y-m-d h:i:s'
+    ): DefaultConfig {
         $dataType = (new DataTypeFormatter)
             ->setType('DateTimeType')
             ->setDateTimeFormat($dateTimeFormat);
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('left');
 
         $this->addColumn(
             $this->key++,
@@ -50,15 +53,18 @@ class DefaultConfig implements Config
         return $this;
     }
 
-    public function addDateColumn(string $name, string $dateFormat): DefaultConfig
-    {
+    public function addDateColumn(
+        string $name, 
+        string $dateFormat = 'Y-m-d'
+    ): DefaultConfig {
         $dataType = (new DataTypeFormatter)
             ->setType('DateType')
             ->setDateFormat($dateFormat);
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('left');
 
         $this->addColumn(
             $this->key++,
@@ -79,7 +85,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('center');
 
         $this->addColumn(
             $this->key++,
@@ -100,7 +107,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('left');
 
         $this->addColumn(
             $this->key++,
@@ -123,7 +131,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('center');
 
         $this->addColumn(
             $this->key++,
@@ -151,7 +160,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('right');
 
         $this->addColumn(
             $this->key++,
@@ -170,7 +180,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('left');
 
         $this->addColumn(
             $this->key++,
@@ -198,7 +209,8 @@ class DefaultConfig implements Config
 
         $column = (new TableColumn)
             ->withLabel($name)
-            ->withDataType($dataType);
+            ->withDataType($dataType)
+            ->withAlign('right');
 
         $this->addColumn(
             $this->key++,

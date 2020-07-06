@@ -11,8 +11,8 @@ class ImageType implements DataType
      * Domyślnie rozmiar obrazka to 16x16 px.
      * Możliwość zmienienia tego rozmiaru.
      */
-    protected $widthImage;
     protected $heightImage;
+    protected $widthImage;
 
     public function __construct(array $sets = null) {
         $this->widthImage = $sets['widthImage'];

@@ -5,8 +5,9 @@ use MyLib\Interfaces\{Column};
 
 class TableColumn implements Column
 {
-    protected $type;
+    protected $align;
     protected $name;
+    protected $type;
 
     public function withLabel(string $label): TableColumn
     {
@@ -32,12 +33,13 @@ class TableColumn implements Column
 
     public function withAlign(string $align): TableColumn
     {
+        $this->align = $align;
         return $this;
     }
 
     public function getAlign(): string
     {
-        return '';
+        return $this->align;
     }
 
 }

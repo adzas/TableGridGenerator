@@ -11,8 +11,8 @@ class LinkType implements DataType
      * Możliwośc wybrania znacznika a lub button, 
      * oraz klasy z Bootstrap 3 w celu zmiany koloru.
      */
-    protected $typeLink;
     protected $classLink;
+    protected $typeLink;
 
     public function __construct(array $sets = null) {
         $this->typeLink = $sets['typeLink'];

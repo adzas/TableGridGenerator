@@ -14,17 +14,14 @@ $rows = json_decode(file_get_contents("data.json"), true);
 $state = HttpState::create(); // instanceof State, dane powinny zostać pobrane z $_GET
 
 $config = (new DefaultConfig) // instanceof Config, z dodatkowymi metodami
-->addIntColumn('id')
-->addTextColumn('name')
-->addIntColumn('age')
-->addTextColumn('company')
-->addCurrencyColumn('balance', 'USD')
-->addTextColumn('phone')
-->addTextColumn('email');
-
-/* echo "<pre>";
-print_r($config);
-echo "</pre>"; */
+    ->addIntColumn('id')
+    ->addCurrencyColumn('balance', 'USD')
+    ->addTextColumn('name')
+    ->addIntColumn('age')
+    ->addTextColumn('gender')
+    ->addTextColumn('company')
+    ->addTextColumn('email')
+    ->addTextColumn('phone');
 
 $dataGrid = new HtmlDataGrid(); // instanceof DataGrid
 
@@ -52,5 +49,6 @@ $dataGrid = new HtmlDataGrid(); // instanceof DataGrid
     </div>
     <!-- Bootstrap JavaScript -->
     <script src="vendor/twbs/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 </body>
 </html>

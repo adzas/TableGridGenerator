@@ -2,8 +2,6 @@
 
 namespace MyLib\Classes\Formatter;
 
-use MyLib\Classes\Alert;
-use DateTime;
 use MyLib\Interfaces\DataType;
 
 class DateTimeType extends DateType implements DataType
