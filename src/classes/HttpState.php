@@ -6,6 +6,11 @@ use MyLib\Interfaces\State;
 class HttpState implements State
 {
     private static $instance;
+    private $rowsPerPage = 9;
+    private $currentPage = 1;
+    private $orderBy = 'id';
+    private $orderDesc = false;
+    private $orderAsc = true;
 
     static function create()
     {
@@ -18,32 +23,32 @@ class HttpState implements State
         if(!self::$instance) {
             self::$instance = new self();
         }
-        return self::$instance;   
+        return self::$instance;
     }
 
     public function getCurrentPage(): int
     {
-        return 1;
+        return $this->currentPage;
     }
 
     public function getOrderBy(): string
     {
-        return 'id';
+        return $this->orderBy;
     }
 
     public function isOrderDesc(): bool
     {
-        return false;
+        return $this->orderDesc;
     }
 
     public function isOrderAsc(): bool
     {
-        return true;
+        return $this->orderAsc;
     }
 
     public function getRowsPerPage(): int
     {
-        return 9;
+        return $this->rowsPerPage;
     }
 }
     
