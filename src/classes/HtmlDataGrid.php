@@ -41,10 +41,7 @@ class HtmlDataGrid implements DataGrid
                         <a href="<?=$this->generateSortChangeLink($rows_keys[$k]);?>">
                             <?=$head->getLabel();?>
                             <?=$rows_keys[$k] == $this->httpState->getOrderBy() ? 
-                            '<svg class="bi bi-arrow-down-short" width="1em" height="1em" viewBox="0 0 16 16" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-                                <path fill-rule="evenodd" d="M4.646 7.646a.5.5 0 0 1 .708 0L8 10.293l2.646-2.647a.5.5 0 0 1 .708.708l-3 3a.5.5 0 0 1-.708 0l-3-3a.5.5 0 0 1 0-.708z"></path>
-                                <path fill-rule="evenodd" d="M8 4.5a.5.5 0 0 1 .5.5v5a.5.5 0 0 1-1 0V5a.5.5 0 0 1 .5-.5z"></path>
-                            </svg>' : 
+                            $this->httpState->getOrderDescIcon() : 
                             '';?>
                         </a>
                     </th>
@@ -57,8 +54,8 @@ class HtmlDataGrid implements DataGrid
     public function getNavigation(int $howMuchRows): void
     {
         if ($howMuchRows <= $this->httpState->getRowsPerPage()) {
-            $countPage = 0;
-            $oneMore = 1;
+            $countPage = 1;
+            $oneMore = 0;
         } else {
             $countPage = round($howMuchRows / $this->httpState->getRowsPerPage());
             if (!!($howMuchRows % $this->httpState->getRowsPerPage())) {
@@ -79,7 +76,7 @@ class HtmlDataGrid implements DataGrid
                             <a class="page-link" href="<?=$this->generatePageChangeLink($i);?>"><?=$i + 1;?></a>
                         </li>
                     <?php endfor; ?>
-                    <li class="page-item <?=$this->httpState->getCurrentPage() == $countPage ? 'disabled' : '';?>">
+                    <li class="page-item <?=$this->httpState->getCurrentPage() == ($countPage - 1) ? 'disabled' : '';?>">
                         <a class="page-link" href="<?=$this->generatePageChangeLink($this->httpState->getCurrentPage() + 1);?>">Next</a>
                     </li>
                 </ul>
