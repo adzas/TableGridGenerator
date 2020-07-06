@@ -33,6 +33,82 @@ class DefaultConfig implements Config
         return $this->limitRowsForPage;
     }
 
+    public function addDateTimeColumn(string $name, string $dateTimeFormat): DefaultConfig
+    {
+        $dataType = (new DataTypeFormatter)
+            ->setType('DateTimeType')
+            ->setDateTimeFormat($dateTimeFormat);
+
+        $column = (new TableColumn)
+            ->withLabel($name)
+            ->withDataType($dataType);
+
+        $this->addColumn(
+            $this->key++,
+            $column
+        );
+        return $this;
+    }
+
+    public function addDateColumn(string $name, string $dateFormat): DefaultConfig
+    {
+        $dataType = (new DataTypeFormatter)
+            ->setType('DateType')
+            ->setDateFormat($dateFormat);
+
+        $column = (new TableColumn)
+            ->withLabel($name)
+            ->withDataType($dataType);
+
+        $this->addColumn(
+            $this->key++,
+            $column
+        );
+        return $this;
+    }
+
+    public function addImageColumn(
+        string $name = null, 
+        string $widthImage = '16px', 
+        string $heightImage = '16px'
+    ): DefaultConfig {
+        $dataType = (new DataTypeFormatter)
+            ->setType('ImageType')
+            ->setWidthImage($widthImage)
+            ->setHeightImage($heightImage);
+
+        $column = (new TableColumn)
+            ->withLabel($name)
+            ->withDataType($dataType);
+
+        $this->addColumn(
+            $this->key++,
+            $column
+        );
+        return $this;
+    }
+
+    public function addLinkColumn(
+        string $name, 
+        string $typeLink = 'a', 
+        string $classLink = 'bg-primary'
+    ): DefaultConfig {
+        $dataType = (new DataTypeFormatter)
+            ->setType('LinkType')
+            ->setTypeLink($typeLink)
+            ->setClassLink($classLink);
+
+        $column = (new TableColumn)
+            ->withLabel($name)
+            ->withDataType($dataType);
+
+        $this->addColumn(
+            $this->key++,
+            $column
+        );
+        return $this;
+    }
+
     /**
      * Dodaje prostą kolumnę numeryczną INT
      */
@@ -40,9 +116,9 @@ class DefaultConfig implements Config
     {
         $dataType = (new DataTypeFormatter)
             ->setType('NumberType')
-            ->setDec('')
+            ->setDecimal('')
             ->setPrecision(0)
-            ->setMode('PHP_ROUND_HALF_UP')
+            ->setMode(PHP_ROUND_HALF_UP)
             ->setConstDecimalPlacesAway(true);
 
         $column = (new TableColumn)
@@ -61,14 +137,14 @@ class DefaultConfig implements Config
      */
     public function addNumberColumn(
         string $name,
-        string $dec = '.',
+        string $decimal = '.',
         int $precision = 2,
-        string $mode = 'PHP_ROUND_HALF_UP',
+        string $mode = 'HALF_UP',
         bool $constDecimalPlacesAway = true
     ): DefaultConfig {
         $dataType = (new DataTypeFormatter)
             ->setType('NumberType')
-            ->setDec($dec)
+            ->setDecimal($decimal)
             ->setPrecision($precision)
             ->setMode($mode)
             ->setConstDecimalPlacesAway($constDecimalPlacesAway);
@@ -106,10 +182,19 @@ class DefaultConfig implements Config
     /**
      * ustawia kolumną z walutą
      */
-    public function addCurrencyColumn(String $name, String $currency): DefaultConfig
-    {
+    public function addCurrencyColumn(
+        string $name, 
+        string $currency = 'USD',
+        string $separator = '.',
+        int $precision = 2,
+        bool $withoutDecimalPlaces = false
+    ): DefaultConfig {
         $dataType = (new DataTypeFormatter)
-            ->setType('MoneyType');
+            ->setType('MoneyType')
+            ->setCurrency($currency)
+            ->setSeparator($separator)
+            ->setPrecisionMoney($precision)
+            ->setWithoutDecimalPlaces($withoutDecimalPlaces);
 
         $column = (new TableColumn)
             ->withLabel($name)
@@ -120,74 +205,5 @@ class DefaultConfig implements Config
             $column
         );
         return $this;
-    }
-
-    public function addDateColumn(string $name = null): DefaultConfig
-    {
-        $dataType = (new DataTypeFormatter)
-            ->setType('DateType');
-
-        $column = (new TableColumn)
-            ->withLabel($name)
-            ->withDataType($dataType);
-
-        $this->addColumn(
-            $this->key++,
-            $column
-        );
-        return $this;
-    }
-
-    public function addDateTimeColumn(string $name = null): DefaultConfig
-    {
-        $dataType = (new DataTypeFormatter)
-            ->setType('DateTimeType');
-
-        $column = (new TableColumn)
-            ->withLabel($name)
-            ->withDataType($dataType);
-
-        $this->addColumn(
-            $this->key++,
-            $column
-        );
-        return $this;
-    }
-
-    public function addImageColumn(string $name = null): DefaultConfig
-    {
-        $dataType = (new DataTypeFormatter)
-            ->setType('ImageType');
-
-        $column = (new TableColumn)
-            ->withLabel($name)
-            ->withDataType($dataType);
-
-        $this->addColumn(
-            $this->key++,
-            $column
-        );
-        return $this;
-    }
-
-    public function addLinkColumn(string $name = null): DefaultConfig
-    {
-        $dataType = (new DataTypeFormatter)
-            ->setType('LinkType');
-
-        $column = (new TableColumn)
-            ->withLabel($name)
-            ->withDataType($dataType);
-
-        $this->addColumn(
-            $this->key++,
-            $column
-        );
-        return $this;
-    }
-
-    public function limitRowsForPage(int $limit)
-    {
-        $this->limitRowsForPage = $limit;
     }
 }

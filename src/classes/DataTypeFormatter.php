@@ -3,12 +3,25 @@
 namespace MyLib\Classes;
 
 use MyLib\Interfaces\DataType;
+use MyLib\Classes\Formatter\DateTimeType;
+use MyLib\Classes\Formatter\DateType;
+use MyLib\Classes\Formatter\ImageType;
+use MyLib\Classes\Formatter\LinkType;
+use MyLib\Classes\Formatter\MoneyType;
 use MyLib\Classes\Formatter\NumberType;
+use MyLib\Classes\Formatter\RawType;
+use MyLib\Classes\Formatter\TextType;
 
 class DataTypeFormatter implements DataType
 {
     protected $type = "TextType";
-    protected $numberSet = [];
+    protected $numberTypeSettings = [];
+    protected $dataTypeSettings = [];
+    protected $dataTimeTypeSettings = [];
+    protected $moneyTypeSettings = [];
+    protected $imageTypeSettings = [];
+    protected $linkTypeSettings = [];
+    protected $rawTypeSettings = [];
 
     /**
      * ustawia typ danych
@@ -22,151 +35,142 @@ class DataTypeFormatter implements DataType
     /**
      * funkcje zapisujące ustawienia dla zmiennych typu number
      */
-    public function setDec(string $dec): DataTypeFormatter
+    public function setDecimal(string $dec): DataTypeFormatter
     {
-        $this->numberSet['dec'] = $dec;
+        $this->numberTypeSettings['decimal'] = $dec;
         return $this;
     }
 
     public function setPrecision(int $precision)
     {
-        $this->numberSet['precision'] = $precision;
+        $this->numberTypeSettings['precision'] = $precision;
+        return $this;
+    }
+
+    /**
+     * funkcje zapisujące ustawienia dla zmiennych typu walutowego
+     */
+    public function setSeparator(string $separator): DataTypeFormatter
+    {
+        $this->moneyTypeSettings['separator'] = $separator;
+        return $this;
+    }
+
+    public function setPrecisionMoney(int $precision)
+    {
+        $this->moneyTypeSettings['precision'] = $precision;
+        return $this;
+    }
+
+    public function setCurrency(string $currency)
+    {
+        $this->moneyTypeSettings['currency'] = $currency;
+        return $this;
+    }
+    
+    public function setWithoutDecimalPlaces(bool $setWithoutDecimalPlaces)
+    {
+        $this->moneyTypeSettings['withoutDecimalPlaces'] = $setWithoutDecimalPlaces;
         return $this;
     }
 
     public function setMode(string $mode)
     {
-        /**
-         * PHP_ROUND_HALF_UP
-         * PHP_ROUND_HALF_DOWN
-         * PHP_ROUND_HALF_EVEN
-         * PHP_ROUND_HALF_ODD
-         */
-        $this->numberSet['mode'] = $mode;
+        $this->numberTypeSettings['mode'] = $mode;
         return $this;
     }
 
     public function setConstDecimalPlacesAway(bool $constDecimalPlacesAway)
     {
-        $this->numberSet['constDecimalPlacesAway'] = $constDecimalPlacesAway;
+        $this->numberTypeSettings['constDecimalPlacesAway'] = $constDecimalPlacesAway;
         return $this;
     }
 
     /**
-     * funkcje zapisujące ustawienia dla zmiennych typu waluta
+     * funkcje zapisujące ustawienia dla zmiennych typu data
      */
+    public function setDateFormat(string $dateFormat): DataTypeFormatter
+    {
+        $this->dataTypeSettings['dateFormat'] = $dateFormat;
+        return $this;
+    }
 
+    /**
+     * funkcje zapisujące ustawienia dla zmiennych typu data - czas
+     */
+    public function setDateTimeFormat(string $dateTimeFormat): DataTypeFormatter
+    {
+        $this->dataTimeTypeSettings['dateTimeFormat'] = $dateTimeFormat;
+        return $this;
+    }
+
+    /**
+     * funkcje zapisujące ustawienia dla zmiennych typu zdjęcie
+     */
+    public function setWidthImage(string $widthImage): DataTypeFormatter
+    {
+        $this->imageTypeSettings['widthImage'] = $widthImage;
+        return $this;
+    }
+
+    public function setHeightImage(string $heightImage): DataTypeFormatter
+    {
+        $this->imageTypeSettings['heightImage'] = $heightImage;
+        return $this;
+    }
+
+    /**
+     * funkcje zapisujące ustawienia dla zmiennych typu link
+     */
+    public function setTypeLink(string $typeLink): DataTypeFormatter
+    {
+        $this->linkTypeSettings['typeLink'] = $typeLink;
+        return $this;
+    }
+
+    public function setClassLink(string $classLink): DataTypeFormatter
+    {
+        $this->linkTypeSettings['classLink'] = $classLink;
+        return $this;
+    }
 
     public function format(String $value): string
     {
         switch ($this->type) {
-            case 'TextType':
-                $return = $this->TextTypeFormat($value);
-                break;
-            case 'NumberType':
-                $numberType = new NumberType($this->numberSet);
-                $return = $numberType->format($value);
-                break;
-            case 'MoneyType':
-                $return = $this->MoneyTypeFormat($value);
-                break;
             case 'DateTimeType':
-                $return = $this->DateTimeTypeFormat($value);
+                $return = (new DateTimeType($this->dataTimeTypeSettings))->format($value);
                 break;
             case 'DateType':
-                $return = $this->DateTypeFormat($value);
+                $return = (new DateType($this->dataTypeSettings))->format($value);
+                break;
+            case 'MoneyType':
+                $return = (new MoneyType($this->moneyTypeSettings))->format($value);
                 break;
             case 'ImageType':
-                $return = $this->ImageTypeFormat($value);
+                $return = (new ImageType($this->imageTypeSettings))->format($value);
                 break;
             case 'LinkType':
-                $return = $this->LinkTypeFormat($value);
+                $return = (new LinkType($this->linkTypeSettings))->format($value);
+                break;
+            case 'NumberType':
+                $return = (new NumberType($this->numberTypeSettings))->format($value);
                 break;
             case 'RawType':
-                $return = $this->RawTypeFormat($value);
+                $return = (new RawType($this->rawTypeSettings))->format($value);
+                break;
+            case 'TextType':
+                $return = (new TextType())->format($value);
                 break;
             default:
-                $return = "domyślny typ. Renderuje ciąg znaków, jednak przefiltrowany, tak żeby nie można było wstawić kodu HTML lub JS.";
+                $return = (new TextType())->format($value);
                 break;
         }
         return $return;
     }
 
-    /**
-     * domyślny typ. 
-     * Renderuje ciąg znaków, jednak przefiltrowany, tak 
-     * żeby nie można było wstawić kodu HTML lub JS.
-     */
-    public function TextTypeFormat(string $text)
-    {
-        return str_replace(' ', '&nbsp;', htmlentities($text));
-    }
-
-    /**
-     * typ do formatowania wartości liczbowych. 
-     * Domyślne formatowanie: tysiące oddzielone spacjami, 
-     * miejsce dziesiętne przecinkiem, dwa miejsca po przecinku zawsze widoczne. 
-     * Możliwość skonfigurowania: 
-     * dowolnego separatora (tysięcy i miejsca dziesiętnego), 
-     * precyzji wyświetlania, 
-     * metody zaokrąglania, 
-     * włączenia / wyłączenia stałej ilości miejsc po przecinku.
-     */    
     public function NumberTypeFormat(float $number)
     {
         return number_format($number, 2, ',', ' ');
-    }
-
-
-    /**
-     * Money Type - typ do formatowania wartości pieniężnych. 
-     * Działa podobnie do NumberType, 
-     * jednak dodatkowo na końcu wyświetla walutę. 
-     * Możliwość skonfigurowania: 
-     * dowolnego separatora (tysięcy i miejsca dziesiętnego)
-     * oraz wyświetlania miejsc dziesiętnych (można wyłączyć aby nie pokazywać groszy).
-     */
-    public function MoneyTypeFormat(float $value)
-    {
-        return 'error';
-    }
-
-    /**
-     * DateType - formatuje date. 
-     * Możliwość wyboru formatowania daty.
-     */
-    public function DateTypeFormat(String $date)
-    {
-        return 'error';
-    }
-
-    /**
-     * DateTimeType - formatuje date i czas. 
-     * Możliwość wybrania formatu (zarówno dayt jak i godziny).
-     */
-    public function DateTimeTypeFormat(String $date)
-    {
-        return 'error';
-    }
-
-    /**
-     * ImageType - wstawia obrazek w znaczniku img.
-     * Domyślnie rozmiar obrazka to 16x16 px.
-     * Możliwość zmienienia tego rozmiaru.
-     */
-    public function ImageTypeFormat(String $src)
-    {
-        return 'error';
-    }
-
-    /**
-     * LinkType - Wstawia link do zasobu. 
-     * Możliwośc wybrania znacznika a lub button, 
-     * oraz klasy z Bootstrap 3 w celu zmiany koloru.
-     */
-    public function LinkTypeFormat(String $link)
-    {
-        return 'error';
     }
 
     /**

@@ -9,24 +9,18 @@ use MyLib\Classes\DefaultConfig;
 
 require_once realpath('vendor/autoload.php');
 
-$rows = json_decode(file_get_contents("data2.json"), true);
+$rows = json_decode(file_get_contents("data.json"), true);
 
 $state = HttpState::create(); // instanceof State, dane powinny zostać pobrane z $_GET
 
 $config = (new DefaultConfig) // instanceof Config, z dodatkowymi metodami
-    ->addIntColumn('id')
-    ->addTextColumn('name')
-    ->addIntColumn('age')
-    ->addTextColumn('company')
-    ->addCurrencyColumn('balance', 'USD')
-    ->addDateColumn('data')
-    ->addDateTimeColumn('dataczas')
-    ->addImageColumn('picture')
-    ->addLinkColumn('link')
-    ->addNumberColumn('number', '.', 4, 'Round', false)
-    ->addTextColumn('email');
-
-$config->limitRowsForPage(2);
+->addIntColumn('id')
+->addTextColumn('name')
+->addIntColumn('age')
+->addTextColumn('company')
+->addCurrencyColumn('balance', 'USD')
+->addTextColumn('phone')
+->addTextColumn('email');
 
 /* echo "<pre>";
 print_r($config);

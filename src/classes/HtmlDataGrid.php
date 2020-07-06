@@ -2,19 +2,16 @@
 
 namespace MyLib\Classes;
 use MyLib\Interfaces\DataGrid;
-use MyLib\Interfaces\State;
 
 class HtmlDataGrid implements DataGrid
 {
     protected $columns;
-    protected $httmState;
-    protected $limitRowsForPage;
+    protected $httpState;
 
     public function withConfig(DefaultConfig $config): HtmlDataGrid
     {
         //tutaj w parametrze przychodzi konfiguracja tabeli
         $this->columns = $config->getColumns();
-        $this->limitRowsForPage = $config->getConfig();
         return $this;
     }
 
@@ -68,11 +65,8 @@ class HtmlDataGrid implements DataGrid
 
     public function getContent(array $rows)
     {
-        /* echo "<pre>";
-        print_r($rows);
-        echo "</pre>"; */
-        if($this->limitRowsForPage < count($rows)) {
-            $rowsCount = $this->limitRowsForPage;
+        if($this->httpState->getRowsPerPage() < count($rows)) {
+            $rowsCount = $this->httpState->getRowsPerPage();
         } else {
             $rowsCount = count($rows);
         }
@@ -94,8 +88,10 @@ class HtmlDataGrid implements DataGrid
             if($j <= count($this->columns)) {
                 echo '<td>';
                 $colGrid = $this->getColumns($j);
-                $dataType = $colGrid->getDataType();
-                echo $dataType->format($col);
+                if ($colGrid) {
+                    $dataType = $colGrid->getDataType();
+                    echo $dataType->format($col);
+                }
                 echo '</td>';
             }
             $j++;
@@ -104,7 +100,12 @@ class HtmlDataGrid implements DataGrid
 
     public function getColumns(int $i)
     {
-        return $this->columns[$i];
+        if (!isset($this->columns[$i])) {
+            Alert::warning();
+            return false;
+        } else {
+            return $this->columns[$i];
+        }
     }
 
     public function getStartTable(): void
