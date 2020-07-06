@@ -2,6 +2,7 @@
 
 namespace MyLib\Classes\Formatter;
 
+use MyLib\Classes\Alert;
 use MyLib\Interfaces\DataType;
 
 class LinkType implements DataType
@@ -21,10 +22,15 @@ class LinkType implements DataType
 
     public function format(string $value): string
     {
-        if ($this->typeLink == 'button') {
-            return $this->renderButtonLink($value);
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            if ($this->typeLink == 'button') {
+                return $this->renderButtonLink($value);
+            } else {
+                return $this->renderLink($value);
+            }
         } else {
-            return $this->renderLink($value);
+            Alert::warning('URL type is incorrect');
+            return '';
         }
     }
 

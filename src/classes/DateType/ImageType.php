@@ -2,6 +2,7 @@
 
 namespace MyLib\Classes\Formatter;
 
+use MyLib\Classes\Alert;
 use MyLib\Interfaces\DataType;
 
 class ImageType implements DataType
@@ -21,7 +22,12 @@ class ImageType implements DataType
 
     public function format(string $value): string
     {
-        $style = 'width: ' . $this->widthImage . '; height: ' . $this->heightImage . '';
-        return '<img style="' . $style . '" src="' . htmlentities($value) . '"/>';
+        if (filter_var($value, FILTER_VALIDATE_URL)) {
+            $style = 'width: ' . $this->widthImage . '; height: ' . $this->heightImage . '';
+            return '<img style="' . $style . '" src="' . htmlentities($value) . '"/>';
+        } else {
+            Alert::warning('URL type is incorrect');
+            return '';
+        }
     }
 }

@@ -7,6 +7,7 @@ class HtmlDataGrid implements DataGrid
 {
     protected $columns;
     protected $httpState;
+    protected $dataKey;
 
     public function withConfig(DefaultConfig $config): HtmlDataGrid
     {
@@ -15,19 +16,27 @@ class HtmlDataGrid implements DataGrid
         return $this;
     }
 
-    public function setState(httpState $state)
+    public function setState(HttpState $state)
     {
         $this->httpState = $state;
     }
 
-    public function render(array $rows, HttpState $state): void
+    public function render($rows, HttpState $state): void
     {
-        $this->setState($state);
-        $this->getStartTable();
-        $this->getHead($rows[0]);
-        $this->getContent($rows);
-        $this->getEndTable();
-        $this->getNavigation(count($rows));
+        if (!is_array($rows) || empty($rows)) {
+            Alert::fatal('no data');
+        } else {
+            if (count($this->columns) != count(array_keys($rows[0]))) {
+                Alert::fatal('Config Column Error');
+            } else {
+                $this->setState($state);
+                $this->getStartTable();
+                $this->getHead($rows[0]);
+                $this->getContent($rows);
+                $this->getEndTable();
+                $this->getNavigation(count($rows));
+            }
+        }
     }
 
     public function getHead(array $row): void
@@ -41,7 +50,6 @@ class HtmlDataGrid implements DataGrid
                         <a href="<?=$this->generateSortChangeLink($rows_keys[$k]);?>">
                             <?=$head->getLabel();?>
                             <?=$this->getIconSort($rows_keys[$k]);?>
-                            
                         </a>
                     </th>
                     <?php endforeach; ?>
@@ -63,7 +71,10 @@ class HtmlDataGrid implements DataGrid
 
     public function getNavigation(int $howMuchRows): void
     {
-        if ($howMuchRows <= $this->httpState->getRowsPerPage()) {
+        if ($howMuchRows == 1) {
+            $countPage = 0;
+            $oneMore = 1;
+        } elseif ($howMuchRows <= $this->httpState->getRowsPerPage()) {
             $countPage = 1;
             $oneMore = 0;
         } else {
@@ -86,7 +97,7 @@ class HtmlDataGrid implements DataGrid
                             <a class="page-link" href="<?=$this->generatePageChangeLink($i);?>"><?=$i + 1;?></a>
                         </li>
                     <?php endfor; ?>
-                    <li class="page-item <?=$this->httpState->getCurrentPage() == ($countPage - 1) ? 'disabled' : '';?>">
+                    <li class="page-item <?=$this->httpState->getCurrentPage() == $countPage ? 'disabled' : '';?>">
                         <a class="page-link" href="<?=$this->generatePageChangeLink($this->httpState->getCurrentPage() + 1);?>">Next</a>
                     </li>
                 </ul>
@@ -140,23 +151,60 @@ class HtmlDataGrid implements DataGrid
         };
     }
 
-    public function getContent(array $rows)
+    /**
+     * Sortuje dane po odpowiedzniej kolumnie
+     */
+    public function dataSort(array $rows)
     {
         if ($this->httpState->isOrderDesc()) {
             usort($rows, $this->buildSorterDesc($this->httpState->getOrderBy()));
         } elseif ($this->httpState->isOrderAsc()) {
             usort($rows, $this->buildSorterAsc($this->httpState->getOrderBy()));
-        } else {
-            $rows;
         }
+        return $rows;
+    }
 
+    /**
+     * Oblicza ile ma wyświetlić stron
+     */
+    public function checkRowsPerPage(array $rows)
+    {
         if($this->httpState->getRowsPerPage() < count($rows)) {
-            $rowsCount = $this->httpState->getRowsPerPage();
+            return $this->httpState->getRowsPerPage();
         } else {
-            $rowsCount = count($rows);
+            return count($rows);
         }
+    }
 
-        $startCount = $this->httpState->getRowsPerPage() * $this->httpState->getCurrentPage();
+    /**
+     * ustala od którego numeru id wyświetlać dane
+     */
+    public function countTo()
+    {
+        return $this->httpState->getRowsPerPage() * $this->httpState->getCurrentPage();
+    }
+
+    /**
+     * Ustawia schemat kluczy na podstawie pierwszego wiersza danych
+     */
+    public function setBasicFrameKey(array $row): void
+    {
+        $this->dataKey = array_keys($row);
+    }
+
+    /**
+     * Wyświetla kontent tabeli
+     */
+    public function getContent(array $rows)
+    {
+        $rows = $this->dataSort($rows);
+
+        $rowsCount = $this->checkRowsPerPage($rows);
+
+        $startCount = $this->countTo();
+
+        $this->setBasicFrameKey($rows[0]);
+        
         ?>
             <tbody>
                 <?php for ($i = $startCount; $i < ($rowsCount + $startCount); $i++): ?>
@@ -168,27 +216,39 @@ class HtmlDataGrid implements DataGrid
         <?php
     }
 
+    /**
+     * generuje pojedynczą linikję tabeli
+     */
     public function generateRow(array $row)
     {
-        $j = 0;
-        foreach ($row as $col) {
-            if($j <= count($this->columns)) {
-                $colGrid = $this->getColumns($j);
-                if ($colGrid) {
-                    echo '<td style="text-align: ' . $colGrid->getAlign() . '">';
-                    echo ($colGrid->getDataType())->format($col);
-                    echo '</td>';
-                } else {
-                    echo '<td>';
-                    echo Alert::warning('Error configuration column');
-                    echo '</td>';
+        if ($this->dataKey !== array_keys($row)) {
+            echo '<td colspan="' . count($row) . '" style="text-align: center">';
+            Alert::fatal('Błędny klucz danych');
+            echo '</td>';
+        } else {
+            $j = 0;
+            foreach ($row as $col) {
+                if($j <= count($this->columns)) {
+                    $colGrid = $this->getColumn($j);
+                    if ($colGrid) {
+                        echo '<td style="text-align: ' . $colGrid->getAlign() . '">';
+                        echo ($colGrid->getDataType())->format($col);
+                        echo '</td>';
+                    } else {
+                        echo '<td>';
+                        echo Alert::warning('Error configuration column');
+                        echo '</td>';
+                    }
                 }
+                $j++;
             }
-            $j++;
         }
     }
 
-    public function getColumns(int $i)
+    /**
+     * generuje kolumnę główną HEAD dla zadajen kolumnie
+     */
+    public function getColumn(int $i)
     {
         if (!isset($this->columns[$i])) {
             return false;

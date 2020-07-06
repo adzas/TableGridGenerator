@@ -117,6 +117,23 @@ class DefaultConfig implements Config
         return $this;
     }
 
+    public function addRawColumn(string $name): DefaultConfig
+    {
+        $dataType = (new DataTypeFormatter)
+            ->setType('RawType');
+
+        $column = (new TableColumn)
+            ->withLabel($name)
+            ->withDataType($dataType)
+            ->withAlign('left');
+
+        $this->addColumn(
+            $this->key++,
+            $column
+        );
+        return $this;
+    }
+
     /**
      * Dodaje prostą kolumnę numeryczną INT
      */
